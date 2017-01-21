@@ -1,0 +1,4 @@
+this is the sixth file for ftp server application.
+this last file too.
+GOOD BYE
+SEE YOU AGAIN...........

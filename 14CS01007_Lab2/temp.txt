@@ -1,0 +1,2 @@
+hi my name is basant kumar meeena
+this is file for testing ftp server service for you.

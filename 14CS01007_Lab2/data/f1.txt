@@ -1,0 +1,3 @@
+this is the first file.
+this ftp server send the file to client.
+the file name should be given by client.
