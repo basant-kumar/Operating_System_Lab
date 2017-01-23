@@ -1,2 +1,0 @@
-this is the second file for ftp server application.
-User can pass the file name and get the file.

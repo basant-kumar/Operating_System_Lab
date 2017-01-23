@@ -1,3 +1,0 @@
-this the third file for ftp server application.
-I am just trying to fill this file with some content.
-blah blah blah blah blah blah blah go and die
