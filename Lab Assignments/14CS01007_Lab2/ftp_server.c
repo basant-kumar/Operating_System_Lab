@@ -1,4 +1,4 @@
-/***************** Created by basant kumar meena (14CS01007) ************************************/
+/***************** Created by Basant Kumar Meena (14CS01007) ************************************/
 /***************** More description given in readMe.txt file ************************************/
 #include<stdio.h>
 #include<sys/socket.h>
@@ -12,9 +12,7 @@
 #include<string.h>
 #include<errno.h>
 #include<sys/time.h>
-
-#define PORT "8888"  //port number for server socket, will use in bind()
-#define max_size 2048   //max size of file, please increase if your file has more size to send all data
+#include<sys/stat.h>
 
 
 /******************* all files are in "data/" folder *****************************/
@@ -31,13 +29,20 @@ void * get_in_addr(struct sockaddr *sa){
 int main(int argc,char *argv[]){	
 	struct addrinfo hints,*res,*p; 					//structure to store server socket details
 	struct sockaddr_storage client_addr; 				//structure to store client socket details
+	struct stat st;
 	struct timeval tv; 						//structure for time, will use in gettimeofday
 	socklen_t client_addrlen; 					//size of client address 
 	int status,sockfd,clientfd,yes=1,numbytes=0,sentbytes=0;
 	int count=1; 							//to count number of send() 
 	unsigned int time;
 	char ip[INET6_ADDRSTRLEN];					 //will store ip address of client
-	char buf[256],buf1[max_size];					 // buffer to use data transfer
+	char buf[256];					 // buffer to use data transfer
+
+	if(argc!=2){
+		printf("Port Number is not given\n");
+		printf("\ne.g->$ ./server 8888\n");
+		exit(0);
+	}
 
 	/************creating log file to store all the activities of server ********************/
 	FILE *lf;
@@ -61,7 +66,7 @@ int main(int argc,char *argv[]){
 	hints.ai_socktype=SOCK_STREAM;
 	hints.ai_flags=AI_PASSIVE;
 	
-	if((status=getaddrinfo(NULL,PORT,&hints,&res))==-1){
+	if((status=getaddrinfo(NULL,argv[1],&hints,&res))==-1){
 		fprintf(stderr,"error in getaddrinfo:%s\n",gai_strerror(status));
 		return 1;
 	}
@@ -108,7 +113,7 @@ int main(int argc,char *argv[]){
 			perror("server:accept");
 			continue;
 		}
-		//convert ip address from struct in_addr or in_addr6 to number-and-dot notation
+		//convert ip address from struct in_addr or in_addr6 to number-and-dot notation(printable form)
 		inet_ntop(client_addr.ss_family,get_in_addr((struct sockaddr*)&client_addr),ip,sizeof(ip));
 
 		printf("getting connection from :%s\n",ip);
@@ -127,8 +132,8 @@ int main(int argc,char *argv[]){
 		if(child_pid==0){//child process
 			close(fd[0]);
 			gettimeofday(&tv,NULL);// get current time
-			time=tv.tv_usec;
-
+			time=tv.tv_usec;		
+	
 			FILE *fp,*log;
 			//printf("the file name is :%s\n",buf);
 			int length=sizeof(buf);
@@ -136,13 +141,28 @@ int main(int argc,char *argv[]){
 			strcpy(z,"data/");
 			strcat(z,buf);
 			
+			int filesize=0;
 			fp=fopen(z,"r");
 			if(fp==NULL){
 				perror("server:file does not exits:>");
+				if(send(clientfd,&filesize,sizeof(int),0)==-1){
+					perror("server:send");
+					exit(0);
+				}
 				close(clientfd);
 				exit(0);
 			}
-			fread(buf1,1,max_size,fp);
+
+			stat(z,&st);
+			filesize=st.st_size;
+			char buf1[filesize];	
+			if(send(clientfd,&filesize,sizeof(int),0)==-1){
+				perror("server:send");
+				exit(0);
+			}
+			//sleep(1);
+
+			fread(buf1,1,sizeof(buf1),fp);
 			fclose(fp);
 			int len=strlen(buf1);
 			//sleep(1);

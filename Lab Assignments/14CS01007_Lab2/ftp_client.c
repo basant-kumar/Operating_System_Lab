@@ -11,23 +11,20 @@
 #include<errno.h>
 #include<sys/time.h>
 
-#define PORT "8888"
-#define max_size 2048
-
-
 int main(int argc,char *argv[]){
 	struct addrinfo hints,*res,*p;
 	int status,sockfd,yes=1,numbytes;
-	char buf[max_size];
-	if(argc != 3){
-		printf("Need ip address for connect and filename too\n");
+	//char buf[max_size];
+	if(argc != 4){
+		printf("Give IP Address, Port Number of server and Filename\n");
+		printf("\ne.g.->$ ./client 192.168.186.128 8888 f1.txt\n");
 		exit(1);
 	}
 	memset(&hints,0,sizeof(hints));
 	hints.ai_family=AF_UNSPEC;
 	hints.ai_socktype=SOCK_STREAM;
 
-	if((status=getaddrinfo(argv[1],PORT,&hints,&res))==-1){
+	if((status=getaddrinfo(argv[1],argv[2],&hints,&res))==-1){
 		fprintf(stderr,"getaddrinfo error:%s\n",gai_strerror(status));
 		return 1;
 	}
@@ -54,25 +51,37 @@ int main(int argc,char *argv[]){
 		exit(1);
 	}
 	printf("connecting to server\n");
-	if((numbytes=send(sockfd,argv[2],sizeof(argv[2]),0))==-1){
+	if((numbytes=send(sockfd,argv[3],sizeof(argv[3]),0))==-1){
 		perror("client:send");
 		exit(1);
 	}
+	int filesize;
+	if(recv(sockfd,&filesize,sizeof(int),0)==-1){
+		perror("client:recv");
+		exit(1);
+	}
+	if(filesize==0){
+		printf("filename does not exists on server\n");
+		exit(0);
+	}else{
+		printf("Good to go\n");
+	}
+	char buf[filesize];
 	//printf("sent bytes :%d\n",numbytes);
 	FILE *fp;
-	fp=fopen(argv[2],"w");
+	fp=fopen(argv[3],"w");
 	if(fp==NULL){
 		perror("file did not open:");
 		exit(1);
 	}
-
+	
 
 	if((numbytes=recv(sockfd,buf,sizeof(buf)-1,0))==-1){
 		perror("client:receive");
 		exit(1);
 	}
 	fwrite(buf,1,numbytes,fp);
-	printf("writing to file.....\n");
+	printf("file transfer is completed\n");
 	
 	close(sockfd);
 
