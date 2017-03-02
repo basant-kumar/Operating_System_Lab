@@ -7,8 +7,14 @@
 #include<fcntl.h>
 #include<unistd.h>
 #include<errno.h>
+#include<math.h>
 
 #define max 1000000
+
+struct divide{
+	int start,end;
+};
+
 struct timeval startread,startcalc,readtime,finish,calctime,overalltime;
 char buf1[max][50],buf[max];
 int count,idx;
@@ -16,15 +22,16 @@ pthread_mutex_t lock=PTHREAD_MUTEX_INITIALIZER;
 
 
 void *thread_fun(void *bkm){
+	struct divide *d=((struct divide*)bkm);
 	int size=atoi(buf1[0]); //printf("size is %d\n",size);
-
-	while(idx < size){//printf("string is %s\n",buf1[idx]);
-		if(atoi(buf1[idx])==3){	
+	
+	while(d->start <= d->end && buf1[d->start]!='\0'){//printf("string is %s\n",buf1[idx]);
+		if(atoi(buf1[d->start])==3){	
 			pthread_mutex_lock(&lock);	 
 			count++; //printf("inside\n");
 			pthread_mutex_unlock(&lock);
 		}
-		idx++;
+		d->start++;
 	}
 }
 
@@ -65,9 +72,16 @@ int main(int argc,char *argv[]){
 
 		gettimeofday(&startcalc, NULL);
 		//count the number of 3s in the input data
+		int ss=atoi(buf1[0]);
+		int jump=ceil(ss/k);
+		struct divide *d=(struct divide*)malloc(sizeof(struct divide));
 		for(i=0;i<k;i++){
-			pthread_create(&thread_id[i],NULL,&thread_fun,NULL);
+			
+			d->start=(jump*i)+1;
+			d->end=jump*(i+1);
+			pthread_create(&thread_id[i],NULL,&thread_fun,(void*)&d);
 		}
+		free(d);
 		for(i=0;i<k;i++){
 			pthread_join(thread_id[i],NULL);
 		}
