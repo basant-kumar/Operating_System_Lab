@@ -22,7 +22,7 @@ main(void)
   mpinit();        // detect other processors
   lapicinit();     // interrupt controller
   seginit();       // segment descriptors
-  cprintf("\ncpu%d: starting xv6\n\n", cpunum());
+  cprintf("\ncpu%d: starting xv6 \n\n", cpunum());
   picinit();       // another interrupt controller
   ioapicinit();    // another interrupt controller
   consoleinit();   // console hardware
