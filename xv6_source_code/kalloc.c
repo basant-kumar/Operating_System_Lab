@@ -44,11 +44,16 @@ kinit2(void *vstart, void *vend)
 
 void
 freerange(void *vstart, void *vend)
-{
+{ cprintf("start and end is %p : %p\n",vstart,vend);
+//  uint count=0;
   char *p;
   p = (char*)PGROUNDUP((uint)vstart);
-  for(; p + PGSIZE <= (char*)vend; p += PGSIZE)
-    kfree(p);
+  cprintf("\nafter round off start is %p\n",p);
+  for(; p + PGSIZE <= (char*)vend; p += PGSIZE){
+      kfree(p);
+      //count++;
+  }
+//  cprintf("count is %d\n\n",count);
 }
 
 //PAGEBREAK: 21
@@ -93,4 +98,3 @@ kalloc(void)
     release(&kmem.lock);
   return (char*)r;
 }
-
