@@ -76,6 +76,7 @@ fileclose(struct file *f)
     begin_op();
     iput(ff.ip);
     end_op();
+    cprintf("system call : file_close()\n");
   }
 }
 
@@ -107,6 +108,7 @@ fileread(struct file *f, char *addr, int n)
     if((r = readi(f->ip, addr, f->off, n)) > 0)
       f->off += r;
     iunlock(f->ip);
+    //cprintf("\nsystem call : file_read(), return value = %d\n",r);
     return r;
   }
   panic("fileread");
@@ -150,8 +152,9 @@ filewrite(struct file *f, char *addr, int n)
         panic("short filewrite");
       i += r;
     }
-    return i == n ? n : -1;
+
+    //cprintf("\nsystem call : file_write()\n");
+    return i == n ? n : -1 ;
   }
   panic("filewrite");
 }
-

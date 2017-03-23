@@ -86,6 +86,7 @@ sys_write(void)
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
+    //cprintf("\nsystem call : file_write()\n");
   return filewrite(f, p, n);
 }
 
@@ -99,6 +100,7 @@ sys_close(void)
     return -1;
   proc->ofile[fd] = 0;
   fileclose(f);
+  //cprintf("system call : close(%d)\n",fd);
   return 0;
 }
 
@@ -110,7 +112,9 @@ sys_fstat(void)
 
   if(argfd(0, 0, &f) < 0 || argptr(1, (void*)&st, sizeof(*st)) < 0)
     return -1;
-  return filestat(f, st);
+    uint bkm1=filestat(f, st);
+    cprintf("system call : fstat, return value = %d\n",bkm1);
+  return bkm1;
 }
 
 // Create the path new as a link to the same inode as old.
@@ -312,6 +316,7 @@ sys_open(void)
       end_op();
       return -1;
     }
+    cprintf("system call : open(%s)\n",path);
   }
 
   if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
@@ -345,6 +350,7 @@ sys_mkdir(void)
   }
   iunlockput(ip);
   end_op();
+  cprintf("system call : mkdir(%s) \n",path);
   return 0;
 }
 
@@ -389,6 +395,7 @@ sys_chdir(void)
   iput(proc->cwd);
   end_op();
   proc->cwd = ip;
+  cprintf("system call : chdir(%s)\n",path);
   return 0;
 }
 
@@ -415,7 +422,9 @@ sys_exec(void)
     if(fetchstr(uarg, &argv[i]) < 0)
       return -1;
   }
-  return exec(path, argv);
+  uint bkm=exec(path, argv);
+  cprintf("system call : exec(%s), return value %d \n",path,bkm);
+  return bkm;
 }
 
 int
@@ -435,6 +444,7 @@ sys_pipe(void)
       proc->ofile[fd0] = 0;
     fileclose(rf);
     fileclose(wf);
+    cprintf("system call : pipe() \n");
     return -1;
   }
   fd[0] = fd0;
