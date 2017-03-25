@@ -85,7 +85,7 @@ userinit(void)
   extern char _binary_initcode_start[], _binary_initcode_size[];
 
   p = allocproc();
-  
+
   initproc = p;
   if((p->pgdir = setupkvm()) == 0)
     panic("userinit: out of memory?");
@@ -176,7 +176,7 @@ fork(void)
   np->state = RUNNABLE;
 
   release(&ptable.lock);
-
+  cprintf("\nsystem call : fork(), return value = %d  \n\n",pid);
   return pid;
 }
 
@@ -198,6 +198,7 @@ exit(void)
       fileclose(proc->ofile[fd]);
       proc->ofile[fd] = 0;
     }
+    //cprintf("exit(), does not return \n");
   }
 
   begin_op();
@@ -253,6 +254,7 @@ wait(void)
         p->killed = 0;
         p->state = UNUSED;
         release(&ptable.lock);
+        cprintf("wait(), return value = %d\n",pid);
         return pid;
       }
     }
@@ -444,6 +446,7 @@ kill(int pid)
     }
   }
   release(&ptable.lock);
+  cprintf("system call : kill(%d)\n",pid);
   return -1;
 }
 

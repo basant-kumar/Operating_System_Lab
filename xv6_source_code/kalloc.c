@@ -29,7 +29,7 @@ struct {
 // after installing a full page table that maps them on all cores.
 void
 kinit1(void *vstart, void *vend)
-{
+{ cprintf("function : kinit1()\n");
   initlock(&kmem.lock, "kmem");
   kmem.use_lock = 0;
   freerange(vstart, vend);
@@ -37,18 +37,24 @@ kinit1(void *vstart, void *vend)
 
 void
 kinit2(void *vstart, void *vend)
-{
+{ cprintf("function : kintit2\n");
   freerange(vstart, vend);
   kmem.use_lock = 1;
 }
 
 void
 freerange(void *vstart, void *vend)
-{
+{ //cprintf("start and end is %p : %p\n",vstart,vend);
+  uint count=0;
+  cprintf("function : freerange()\n");
   char *p;
   p = (char*)PGROUNDUP((uint)vstart);
-  for(; p + PGSIZE <= (char*)vend; p += PGSIZE)
-    kfree(p);
+  //cprintf("\nafter round off start is %p\n",p);
+  for(; p + PGSIZE <= (char*)vend; p += PGSIZE){
+      kfree(p);
+      count++;
+  }
+  cprintf("function : kfree() : %d times\n",count);
 }
 
 //PAGEBREAK: 21
@@ -58,7 +64,7 @@ freerange(void *vstart, void *vend)
 // initializing the allocator; see kinit above.)
 void
 kfree(char *v)
-{
+{ 
   struct run *r;
 
   if((uint)v % PGSIZE || v < end || V2P(v) >= PHYSTOP)
@@ -81,7 +87,7 @@ kfree(char *v)
 // Returns 0 if the memory cannot be allocated.
 char*
 kalloc(void)
-{
+{ cprintf("function : kalloc()\n");
   struct run *r;
 
   if(kmem.use_lock)
@@ -93,4 +99,3 @@ kalloc(void)
     release(&kmem.lock);
   return (char*)r;
 }
-

@@ -8,6 +8,21 @@
 #include "proc.h"
 
 int
+sys_getdate(void)
+{
+  struct rtcdate rdate;
+  cmostime(&rdate);
+  cprintf("current time is %d:%d\n",rdate.hour,rdate.minute);
+  return rdate.hour;
+}
+
+int
+sys_getyear(void)
+{
+    return 2017;
+}
+
+int
 sys_fork(void)
 {
   return fork();
@@ -15,7 +30,7 @@ sys_fork(void)
 
 int
 sys_exit(void)
-{
+{ //cprintf("exit()\n");
   exit();
   return 0;  // not reached
 }
@@ -38,13 +53,13 @@ sys_kill(void)
 
 int
 sys_getpid(void)
-{
+{cprintf("\ngetpid()\n");
   return proc->pid;
 }
 
 int
 sys_sbrk(void)
-{
+{cprintf("\nsbrk()\n");
   int addr;
   int n;
 
@@ -58,7 +73,7 @@ sys_sbrk(void)
 
 int
 sys_sleep(void)
-{
+{cprintf("\nsleep()\n");
   int n;
   uint ticks0;
 
@@ -81,7 +96,7 @@ sys_sleep(void)
 // since start.
 int
 sys_uptime(void)
-{
+{cprintf("\nuptime()\n");
   uint xticks;
 
   acquire(&tickslock);
