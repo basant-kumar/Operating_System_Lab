@@ -230,7 +230,7 @@ exit(void)
 // Return -1 if this process has no children.
 int
 wait(void)
-{
+{ cprintf("function : wait()\n");
   struct proc *p;
   int havekids, pid;
 
@@ -254,7 +254,7 @@ wait(void)
         p->killed = 0;
         p->state = UNUSED;
         release(&ptable.lock);
-        cprintf("wait(), return value = %d\n",pid);
+        //cprintf("wait(), return value = %d\n",pid);
         return pid;
       }
     }

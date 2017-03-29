@@ -187,7 +187,7 @@ switchuvm(struct proc *p)
 // sz must be less than a page.
 void
 inituvm(pde_t *pgdir, char *init, uint sz)
-{
+{ cprintf("gonna load init code\n\n");
   char *mem;
 
   if(sz >= PGSIZE)
