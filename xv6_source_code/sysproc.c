@@ -66,8 +66,9 @@ sys_sbrk(void)
   if(argint(0, &n) < 0)
     return -1;
   addr = proc->sz;
-  if(growproc(n) < 0)
-    return -1;
+  //if(growproc(n) < 0)
+  //      return -1;
+  //cprintf("rcr2 is : 0x%x\n",rcr2());
   return addr;
 }
 

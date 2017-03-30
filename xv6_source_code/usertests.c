@@ -1413,7 +1413,7 @@ forktest(void)
 
 void
 sbrktest(void)
-{
+{printf(1,"sbrktest me hu\n");
   int fds[2], pid, pids[10], ppid;
   char *a, *b, *c, *lastaddr, *oldbrk, *p, scratch;
   uint amt;

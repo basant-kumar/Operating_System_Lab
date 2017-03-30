@@ -159,7 +159,7 @@ switchkvm(void)
   lcr3(V2P(kpgdir));   // switch to the kernel page table
 }
 
-// Switch TSS and h/w page table to correspond to process p.
+// Switch TSS(Task Stack Segment) and h/w page table to correspond to process p.
 void
 switchuvm(struct proc *p)
 {
