@@ -169,7 +169,8 @@ main(void)
     }
     printf(1,"called fork()\n");
     if(fork1() == 0)
-      runcmd(parsecmd(buf)); printf(1,"called parsecmd and runcmd\n" );
+      runcmd(parsecmd(buf)); 
+    printf(1,"called parsecmd and runcmd\n" );
     wait();
   }
   exit();

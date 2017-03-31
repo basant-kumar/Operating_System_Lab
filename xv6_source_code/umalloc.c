@@ -90,9 +90,10 @@ malloc(uint nbytes)
       freep = prevp;
       return (void*)(p + 1);
     }
-    if(p == freep)
+    if(p == freep){
       printf(1,"1nunits is :%d\n",nunits );
       if((p = morecore(nunits)) == 0)
         return 0;
+    }
   }
 }
