@@ -39,9 +39,11 @@ allocproc(void)
 
   acquire(&ptable.lock);
 
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
       goto found;
+    //cprintf("kuch nhi mila %s\n",p->name);
+  }
 
   release(&ptable.lock);
   return 0;
@@ -82,7 +84,7 @@ void
 userinit(void)
 {
   struct proc *p;
-  extern char _binary_initcode_start[], _binary_initcode_size[];
+  extern char _binary_initcode_start[], _binary_initcode_size[]; 
 
   p = allocproc();
 
@@ -230,7 +232,7 @@ exit(void)
 // Return -1 if this process has no children.
 int
 wait(void)
-{
+{ cprintf("function : wait()\n");
   struct proc *p;
   int havekids, pid;
 
@@ -254,7 +256,7 @@ wait(void)
         p->killed = 0;
         p->state = UNUSED;
         release(&ptable.lock);
-        cprintf("wait(), return value = %d\n",pid);
+        //cprintf("wait(), return value = %d\n",pid);
         return pid;
       }
     }

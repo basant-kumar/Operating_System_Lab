@@ -62,6 +62,7 @@ sys_dup(void)
   if((fd=fdalloc(f)) < 0)
     return -1;
   filedup(f);
+ // cprintf("function : dup()\n");
   return fd;
 }
 
@@ -74,6 +75,7 @@ sys_read(void)
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
+  //cprintf("\nsystem call : file_read()\n");
   return fileread(f, p, n);
 }
 
@@ -86,7 +88,7 @@ sys_write(void)
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
-    //cprintf("\nsystem call : file_write()\n");
+  //cprintf("\nsystem call : file_write()\n");
   return filewrite(f, p, n);
 }
 
@@ -100,7 +102,7 @@ sys_close(void)
     return -1;
   proc->ofile[fd] = 0;
   fileclose(f);
-  //cprintf("system call : close(%d)\n",fd);
+ // cprintf("system call : file_close()\n");
   return 0;
 }
 
@@ -112,9 +114,9 @@ sys_fstat(void)
 
   if(argfd(0, 0, &f) < 0 || argptr(1, (void*)&st, sizeof(*st)) < 0)
     return -1;
-    uint bkm1=filestat(f, st);
-    cprintf("system call : fstat, return value = %d\n",bkm1);
-  return bkm1;
+ 
+  //s cprintf("system call : fstat\n");	
+  return filestat(f, st);
 }
 
 // Create the path new as a link to the same inode as old.
@@ -371,6 +373,7 @@ sys_mknod(void)
   }
   iunlockput(ip);
   end_op();
+  cprintf("function : mknod()\n");
   return 0;
 }
 
@@ -422,9 +425,9 @@ sys_exec(void)
     if(fetchstr(uarg, &argv[i]) < 0)
       return -1;
   }
-  uint bkm=exec(path, argv);
-  cprintf("system call : exec(%s), return value %d \n",path,bkm);
-  return bkm;
+
+  
+  return exec(path, argv);
 }
 
 int

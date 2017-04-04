@@ -99,6 +99,7 @@ exec(char *path, char **argv)
   proc->tf->esp = sp;
   switchuvm(proc);
   freevm(oldpgdir);
+  cprintf("system call : exec(), return value 0 \n");
   return 0;
 
  bad:
@@ -108,5 +109,6 @@ exec(char *path, char **argv)
     iunlockput(ip);
     end_op();
   }
+  cprintf("system call : exec(), return value -1 \n");
   return -1;
 }

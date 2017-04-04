@@ -159,7 +159,7 @@ switchkvm(void)
   lcr3(V2P(kpgdir));   // switch to the kernel page table
 }
 
-// Switch TSS and h/w page table to correspond to process p.
+// Switch TSS(Task Stack Segment) and h/w page table to correspond to process p.
 void
 switchuvm(struct proc *p)
 {
@@ -187,7 +187,7 @@ switchuvm(struct proc *p)
 // sz must be less than a page.
 void
 inituvm(pde_t *pgdir, char *init, uint sz)
-{
+{ cprintf("gonna load init code\n\n");
   char *mem;
 
   if(sz >= PGSIZE)

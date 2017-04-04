@@ -45,28 +45,35 @@ free(void *ap)
 
 static Header*
 morecore(uint nu)
-{
+{printf(1,"tu bhi mar ja\n");
   char *p;
   Header *hp;
 
   if(nu < 4096)
     nu = 4096;
+  printf(1,"2nunits is :%d\n",nu);  
   p = sbrk(nu * sizeof(Header));
+  printf(1,"p is %d\n", p);
   if(p == (char*)-1)
     return 0;
+  printf(1,"jhush kedia\n");
   hp = (Header*)p;
+  printf(1,"jhush kedia1\n");
   hp->s.size = nu;
+  printf(1,"jhush kedia2\n");
   free((void*)(hp + 1));
+  printf(1,"jhush kedia3\n");
   return freep;
 }
 
 void*
 malloc(uint nbytes)
-{
+{printf(1,"function : malloc and nbytes is :%d\n", nbytes);
   Header *p, *prevp;
   uint nunits;
 
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
+  printf(1,"nunits is :%d\n",nunits );
   if((prevp = freep) == 0){
     base.s.ptr = freep = prevp = &base;
     base.s.size = 0;
@@ -83,8 +90,10 @@ malloc(uint nbytes)
       freep = prevp;
       return (void*)(p + 1);
     }
-    if(p == freep)
+    if(p == freep){
+      printf(1,"1nunits is :%d\n",nunits );
       if((p = morecore(nunits)) == 0)
         return 0;
+    }
   }
 }

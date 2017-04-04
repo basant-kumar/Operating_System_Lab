@@ -56,7 +56,7 @@ struct cmd *parsecmd(char*);
 // Execute cmd.  Never returns.
 void
 runcmd(struct cmd *cmd)
-{
+{ printf(1,"function : rnucmd()\n");
   int p[2];
   struct backcmd *bcmd;
   struct execcmd *ecmd;
@@ -72,6 +72,7 @@ runcmd(struct cmd *cmd)
     panic("runcmd");
 
   case EXEC:
+    printf(1,"inside exec in runcmd\n");
     ecmd = (struct execcmd*)cmd;
     if(ecmd->argv[0] == 0)
       exit();
@@ -132,7 +133,7 @@ runcmd(struct cmd *cmd)
 
 int
 getcmd(char *buf, int nbuf)
-{
+{ printf(1,"function : getcmd\n");
   printf(2, "$ ");
   memset(buf, 0, nbuf);
   gets(buf, nbuf);
@@ -143,13 +144,14 @@ getcmd(char *buf, int nbuf)
 
 int
 main(void)
-{
+{ 
   static char buf[100];
   int fd;
 
   // Ensure that three file descriptors are open.
   while((fd = open("console", O_RDWR)) >= 0){
     if(fd >= 3){
+      //  printf(1,"mar ja\n");
       close(fd);
       break;
     }
@@ -157,6 +159,7 @@ main(void)
 
   // Read and run input commands.
   while(getcmd(buf, sizeof(buf)) >= 0){
+    //printf(1,"cmd is : %s\n",buf);
     if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
       // Chdir must be called by the parent, not the child.
       buf[strlen(buf)-1] = 0;  // chop \n
@@ -164,8 +167,10 @@ main(void)
         printf(2, "cannot cd %s\n", buf+3);
       continue;
     }
+    printf(1,"called fork()\n");
     if(fork1() == 0)
-      runcmd(parsecmd(buf));
+      runcmd(parsecmd(buf)); 
+    printf(1,"called parsecmd and runcmd\n" );
     wait();
   }
   exit();
@@ -180,12 +185,13 @@ panic(char *s)
 
 int
 fork1(void)
-{
+{printf(1,"function : fork1\n");
   int pid;
 
   pid = fork();
   if(pid == -1)
     panic("fork");
+  //printf(1,"pid is %d\n",pid);
   return pid;
 }
 
@@ -194,7 +200,7 @@ fork1(void)
 
 struct cmd*
 execcmd(void)
-{
+{printf(1,"function : execcmd gonna called malloc\n");
   struct execcmd *cmd;
 
   cmd = malloc(sizeof(*cmd));
@@ -205,7 +211,7 @@ execcmd(void)
 
 struct cmd*
 redircmd(struct cmd *subcmd, char *file, char *efile, int mode, int fd)
-{
+{printf(1,"function : redircmd gonna called malloc\n");
   struct redircmd *cmd;
 
   cmd = malloc(sizeof(*cmd));
@@ -221,7 +227,7 @@ redircmd(struct cmd *subcmd, char *file, char *efile, int mode, int fd)
 
 struct cmd*
 pipecmd(struct cmd *left, struct cmd *right)
-{
+{printf(1,"function : pipecmd gonna called malloc\n");
   struct pipecmd *cmd;
 
   cmd = malloc(sizeof(*cmd));
@@ -234,7 +240,7 @@ pipecmd(struct cmd *left, struct cmd *right)
 
 struct cmd*
 listcmd(struct cmd *left, struct cmd *right)
-{
+{printf(1,"function : listcmd gonna called malloc\n");
   struct listcmd *cmd;
 
   cmd = malloc(sizeof(*cmd));
@@ -247,7 +253,7 @@ listcmd(struct cmd *left, struct cmd *right)
 
 struct cmd*
 backcmd(struct cmd *subcmd)
-{
+{printf(1,"function : backcmd\n");
   struct backcmd *cmd;
 
   cmd = malloc(sizeof(*cmd));
@@ -264,7 +270,7 @@ char symbols[] = "<|>&;()";
 
 int
 gettoken(char **ps, char *es, char **q, char **eq)
-{
+{printf(1,"function : gettoken\n");
   char *s;
   int ret;
 
@@ -309,7 +315,7 @@ gettoken(char **ps, char *es, char **q, char **eq)
 
 int
 peek(char **ps, char *es, char *toks)
-{
+{printf(1,"function : peek\n");
   char *s;
 
   s = *ps;
@@ -326,7 +332,7 @@ struct cmd *nulterminate(struct cmd*);
 
 struct cmd*
 parsecmd(char *s)
-{
+{ printf(1,"function : parsecmd\n");
   char *es;
   struct cmd *cmd;
 
@@ -343,7 +349,7 @@ parsecmd(char *s)
 
 struct cmd*
 parseline(char **ps, char *es)
-{
+{ printf(1,"function : parseline\n");
   struct cmd *cmd;
 
   cmd = parsepipe(ps, es);
@@ -360,7 +366,7 @@ parseline(char **ps, char *es)
 
 struct cmd*
 parsepipe(char **ps, char *es)
-{
+{ printf(1,"function : parsepipe\n");
   struct cmd *cmd;
 
   cmd = parseexec(ps, es);
@@ -373,7 +379,7 @@ parsepipe(char **ps, char *es)
 
 struct cmd*
 parseredirs(struct cmd *cmd, char **ps, char *es)
-{
+{ printf(1,"function : parseredirs\n");
   int tok;
   char *q, *eq;
 
@@ -398,7 +404,7 @@ parseredirs(struct cmd *cmd, char **ps, char *es)
 
 struct cmd*
 parseblock(char **ps, char *es)
-{
+{ printf(1,"function : parseblock\n");
   struct cmd *cmd;
 
   if(!peek(ps, es, "("))
@@ -414,7 +420,7 @@ parseblock(char **ps, char *es)
 
 struct cmd*
 parseexec(char **ps, char *es)
-{
+{ printf(1,"function : parseexec\n");
   char *q, *eq;
   int tok, argc;
   struct execcmd *cmd;
@@ -448,7 +454,7 @@ parseexec(char **ps, char *es)
 // NUL-terminate all the counted strings.
 struct cmd*
 nulterminate(struct cmd *cmd)
-{
+{ printf(1,"function : nulterminate\n");
   int i;
   struct backcmd *bcmd;
   struct execcmd *ecmd;

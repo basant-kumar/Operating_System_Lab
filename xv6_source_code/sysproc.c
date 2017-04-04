@@ -12,14 +12,14 @@ sys_getdate(void)
 {
   struct rtcdate rdate;
   cmostime(&rdate);
-  cprintf("current time is %d:%d\n",rdate.hour,rdate.minute);
-  return rdate.hour;
+  cprintf("current time is %d/%d/%d\n",rdate.day,rdate.month,rdate.year);
+  return 0;
 }
 
 int
 sys_getyear(void)
 {
-    return 2017;
+    return 1975;
 }
 
 int
@@ -66,8 +66,9 @@ sys_sbrk(void)
   if(argint(0, &n) < 0)
     return -1;
   addr = proc->sz;
-  if(growproc(n) < 0)
-    return -1;
+  //if(growproc(n) < 0)
+  //      return -1;
+  //cprintf("rcr2 is : 0x%x\n",rcr2());
   return addr;
 }
 

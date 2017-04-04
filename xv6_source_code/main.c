@@ -16,12 +16,15 @@ extern char end[]; // first address after kernel loaded from ELF file
 // doing some setup required for memory allocator to work.
 int
 main(void)
-{ 
+{
   kinit1(end, P2V(4*1024*1024)); // phys page allocator
   kvmalloc();      // kernel page table
   mpinit();        // detect other processors
   lapicinit();     // interrupt controller
   seginit();       // segment descriptors
+  cprintf("***************************************************\n");
+  cprintf("This my first edit in xv6 (Basant Kumar Meena)\n");
+  cprintf("***************************************************\n");
   cprintf("\ncpu%d: starting xv6 \n\n", cpunum());
   picinit();       // another interrupt controller
   ioapicinit();    // another interrupt controller
@@ -36,8 +39,11 @@ main(void)
     timerinit();   // uniprocessor timer
   startothers();   // start other processors
   kinit2(P2V(4*1024*1024), P2V(PHYSTOP)); // must come after startothers()
+cprintf("\nonly 1 time\n");
   userinit();      // first user process
+cprintf("\nonly 2 time\n");
   mpmain();        // finish this processor's setup
+cprintf("\nonly 3 time\n");
 }
 
 // Other CPUs jump here from entryother.S.
@@ -53,11 +59,14 @@ mpenter(void)
 // Common CPU setup code.
 static void
 mpmain(void)
-{
+{ cprintf("function : mpmain()\n");
   cprintf("cpu%d: starting\n", cpunum());
   idtinit();       // load idt register
+cprintf("function : mpmain_1()\n");
   xchg(&cpu->started, 1); // tell startothers() we're up
+cprintf("function : mpmain_2()\n");
   scheduler();     // start running processes
+cprintf("function : mpmain_3()\n");
 }
 
 pde_t entrypgdir[];  // For entry.S
@@ -65,7 +74,7 @@ pde_t entrypgdir[];  // For entry.S
 // Start the non-boot (AP) processors.
 static void
 startothers(void)
-{
+{ cprintf("function : startothers\n");
   extern uchar _binary_entryother_start[], _binary_entryother_size[];
   uchar *code;
   struct cpu *c;
@@ -95,6 +104,7 @@ startothers(void)
     while(c->started == 0)
       ;
   }
+cprintf("function : startothers ends\n");
 }
 
 // The boot page table used in entry.S and entryother.S.

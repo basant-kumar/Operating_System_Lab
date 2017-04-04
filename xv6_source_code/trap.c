@@ -1,4 +1,4 @@
-#include "types.h"
+  #include "types.h"
 #include "defs.h"
 #include "param.h"
 #include "memlayout.h"
@@ -90,7 +90,7 @@ trap(struct trapframe *tf)
     cprintf("pid %d %s: trap %d err %d on cpu %d "
             "eip 0x%x addr 0x%x--kill proc\n",
             proc->pid, proc->name, tf->trapno, tf->err, cpunum(), tf->eip,
-            rcr2());
+           rcr2()) ;
     proc->killed = 1;
   }
 

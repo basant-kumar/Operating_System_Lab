@@ -29,7 +29,7 @@ struct {
 // after installing a full page table that maps them on all cores.
 void
 kinit1(void *vstart, void *vend)
-{ cprintf("function : kinit1()\n");
+{ //cprintf("function : kinit1()\n");
   initlock(&kmem.lock, "kmem");
   kmem.use_lock = 0;
   freerange(vstart, vend);
@@ -46,7 +46,7 @@ void
 freerange(void *vstart, void *vend)
 { //cprintf("start and end is %p : %p\n",vstart,vend);
   uint count=0;
-  cprintf("function : freerange()\n");
+  //cprintf("function : freerange()\n");
   char *p;
   p = (char*)PGROUNDUP((uint)vstart);
   //cprintf("\nafter round off start is %p\n",p);
@@ -54,7 +54,7 @@ freerange(void *vstart, void *vend)
       kfree(p);
       count++;
   }
-  cprintf("function : kfree() : %d times\n",count);
+  //cprintf("function : kfree() : %d times\n",count);
 }
 
 //PAGEBREAK: 21
@@ -87,7 +87,7 @@ kfree(char *v)
 // Returns 0 if the memory cannot be allocated.
 char*
 kalloc(void)
-{ cprintf("function : kalloc()\n");
+{ //cprintf("function : kalloc()\n");
   struct run *r;
 
   if(kmem.use_lock)
